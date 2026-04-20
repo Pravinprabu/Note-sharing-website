@@ -1,0 +1,69 @@
+.auth-page {
+  min-height: calc(100vh - 4rem - 90px); /* minus navbar and footer */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: radial-gradient(circle at center, var(--primary-light) 0%, var(--bg-main) 100%);
+  animation: fadeIn 0.4s ease;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 2.5rem;
+}
+
+.auth-logo {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+}
+
+.auth-form {
+  margin-top: 1.5rem;
+  text-align: left;
+}
+
+.input-group {
+  margin-bottom: 1.25rem;
+}
+
+.input-group label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.auth-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.forgot-link, .auth-link {
+  color: var(--primary);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.forgot-link:hover, .auth-link:hover {
+  text-decoration: underline;
+  color: #D4A000;
+}
+
+.auth-footer {
+  margin-top: 2rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
