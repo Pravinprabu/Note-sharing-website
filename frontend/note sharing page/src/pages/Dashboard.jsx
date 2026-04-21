@@ -1,19 +1,38 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Filter, BookOpen, Star, Download, Heart } from 'lucide-react';
 import './Dashboard.css';
 
-const MOCK_NOTES = [
-  { id: 1, title: 'Data Structures & Algorithms', author: 'Alex M.', dept: 'Computer Science', subject: 'CS201', rating: 4.9, downloads: 1250 },
-  { id: 2, title: 'Thermodynamics Final Prep', author: 'Sarah J.', dept: 'Mechanical Eng', subject: 'ME305', rating: 4.8, downloads: 980 },
-  { id: 3, title: 'Macroeconomics Intro', author: 'David K.', dept: 'Economics', subject: 'ECO101', rating: 4.5, downloads: 750 },
-  { id: 4, title: 'Organic Chemistry Reactions', author: 'Emily R.', dept: 'Chemistry', subject: 'CHM202', rating: 4.7, downloads: 1100 },
-  { id: 5, title: 'Linear Algebra Matrices', author: 'Michael T.', dept: 'Mathematics', subject: 'MAT210', rating: 4.6, downloads: 640 },
-  { id: 6, title: 'Modern Physics', author: 'Jessica L.', dept: 'Physics', subject: 'PHY301', rating: 4.9, downloads: 1500 },
+const DEPARTMENTS = [
+  'All', 
+  'Information Technology', 
+  'Computer Science and design', 
+  'Electronics and Communication', 
+  'Electronics and Electrical', 
+  'Mechanical', 
+  'Civil', 
+  'Science and Humanities', 
+  'ECE(ACT)', 
+  'ECE(VLSI)'
 ];
 
-const DEPARTMENTS = ['All', 'Computer Science', 'Mechanical Eng', 'Economics', 'Chemistry', 'Mathematics', 'Physics'];
-
 const Dashboard = () => {
+  const [notes, setNotes] = useState([]);
+  
+  useEffect(() => {
+    const fetchNotes = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/notes');
+        if (response.ok) {
+          const data = await response.json();
+          setNotes(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch notes', error);
+      }
+    }
+    fetchNotes();
+  }, []);
+
   return (
     <div className="dashboard-page container pt-8 pb-12">
       <div className="dashboard-header">
@@ -66,21 +85,25 @@ const Dashboard = () => {
         {/* Main Grid */}
         <main className="notes-grid-container">
           <div className="notes-grid">
-            {MOCK_NOTES.map(note => (
-              <div className="note-card" key={note.id}>
+            {notes.length === 0 ? (
+                <div style={{gridColumn: '1 / -1', textAlign: 'center', padding: '2rem'}}>No notes available. Be the first to upload one!</div>
+            ) : 
+            notes.map(note => (
+              <div className="note-card" key={note._id}>
                 <div className="note-card-header">
                   <div className="note-icon-wrapper">
                     <BookOpen size={24} color="var(--primary)" />
                   </div>
-                  <div className="note-badge">{note.subject}</div>
+                  <div className="note-badge">Notes</div>
                 </div>
                 
-                <h3 className="note-title">{note.title}</h3>
-                <p className="note-author">By {note.author} • {note.dept}</p>
+                <h3 className="note-title">{note.title || note.filename}</h3>
+                <p className="note-author">By {note.uploader_name || 'Anonymous'}</p>
+                <div style={{fontSize: '0.8rem', color: 'gray', marginBottom: '10px'}}>{new Date(note.upload_date).toLocaleDateString()}</div>
                 
                 <div className="note-stats">
-                  <span className="stat"><Star size={16} className="star-icon" fill="currentColor" /> {note.rating}</span>
-                  <span className="stat"><Download size={16} /> {note.downloads}</span>
+                  <span className="stat"><Star size={16} className="star-icon" fill="currentColor" /> {4.5}</span>
+                  <span className="stat"><Download size={16} /> {Math.floor(Math.random() * 100) + 1}</span>
                 </div>
                 
                 <div className="note-card-footer">
