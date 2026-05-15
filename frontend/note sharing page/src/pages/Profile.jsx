@@ -1,14 +1,33 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { User, BookOpen, Star, Download, Settings } from 'lucide-react';
 import './Pages.css';
 
-const MOCK_MY_NOTES = [
-  { id: 1, title: 'Data Structures Introduction', subject: 'CS201', rating: 4.8, downloads: 450, date: 'Oct 12, 2023' },
-  { id: 2, title: 'Advanced Algorithms', subject: 'CS301', rating: 5.0, downloads: 320, date: 'Nov 05, 2023' },
-];
-
 const Profile = () => {
-  return (
+  const [myNotes, setMyNotes] = useState([]);
+  const [user, setUser] = useState({ name: 'Guest', email: '' });
+
+  useEffect(() => {
+    // Get user from localStorage
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+
+    const fetchMyNotes = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/notes');
+        if (response.ok) {
+          const data = await response.json();
+          // Filter notes by the current user
+          const filtered = data.filter(note => note.uploader_name === (storedUser ? JSON.parse(storedUser).name : ''));
+          setMyNotes(filtered);
+        }
+      } catch (error) {
+        console.error('Failed to fetch notes', error);
+      }
+    }
+    fetchMyNotes();
+  }, []);
     <div className="container py-12 page-fade-in">
       <div className="profile-header">
         <div className="profile-info-card glass-card">
@@ -16,11 +35,11 @@ const Profile = () => {
             <User size={48} color="var(--primary)" />
           </div>
           <div className="profile-details">
-            <h1>Alex Morgan</h1>
-            <p className="text-secondary">Computer Science Department</p>
+            <h1>{user.name}</h1>
+            <p className="text-secondary">{user.email}</p>
             <div className="profile-stats mt-4">
               <div className="stat-box">
-                <span className="stat-val">2</span>
+                <span className="stat-val">{myNotes.length}</span>
                 <span className="stat-lbl">Uploads</span>
               </div>
               <div className="stat-box">
@@ -42,23 +61,23 @@ const Profile = () => {
           <h2>Notes Shared by You</h2>
         </div>
         
-        {MOCK_MY_NOTES.length > 0 ? (
+        {myNotes.length > 0 ? (
           <div className="my-notes-grid">
-            {MOCK_MY_NOTES.map(note => (
-              <div className="my-note-card glass-card" key={note.id}>
+            {myNotes.map(note => (
+              <div className="my-note-card glass-card" key={note._id}>
                 <div className="my-note-header">
-                  <div className="note-badge">{note.subject}</div>
-                  <span className="note-date">{note.date}</span>
+                  <div className="note-badge">Notes</div>
+                  <span className="note-date">{new Date(note.upload_date).toLocaleDateString()}</span>
                 </div>
-                <h3>{note.title}</h3>
+                <h3>{note.title || note.filename}</h3>
                 
                 <div className="note-stats mt-4">
-                  <span className="stat"><Star size={16} className="star-icon" fill="currentColor" /> {note.rating}</span>
-                  <span className="stat"><Download size={16} /> {note.downloads} downloads</span>
+                  <span className="stat"><Star size={16} className="star-icon" fill="currentColor" /> 4.5</span>
+                  <span className="stat"><Download size={16} /> 0 downloads</span>
                 </div>
                 
                 <div className="mt-4 flex gap-2">
-                  <button className="btn btn-primary" style={{ flex: 1 }}>Update file</button>
+                  <a href={`http://localhost:5000/api/files/${note.file_id}`} target="_blank" rel="noreferrer" className="btn btn-primary" style={{ flex: 1, textAlign: 'center' }}>View file</a>
                   <button className="btn btn-outline" style={{ color: '#EF4444', borderColor: '#FEE2E2' }}>Delete</button>
                 </div>
               </div>

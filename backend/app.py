@@ -8,6 +8,9 @@ import jwt
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
+import gridfs
+import io
+from flask import send_file, abort
 
 load_dotenv()
 
@@ -19,9 +22,10 @@ MONGO_URI = os.getenv("MONGO_URI")
 JWT_SECRET = os.getenv("JWT_SECRET", "super_secret_key")
 
 client = MongoClient(MONGO_URI)
-db = client.get_database() # Uses the default database in URI or specify
+db = client.get_database("notesharing") # Explicitly specify the database
 users_collection = db["users"]
 notes_collection = db["notes"]
+fs = gridfs.GridFS(db)
 
 UPLOAD_FOLDER = 'uploads'
 if not os.path.exists(UPLOAD_FOLDER):
@@ -110,20 +114,26 @@ def upload_file():
     if file.filename == '':
         return jsonify({"message": "No selected file"}), 400
     
-    if file and file.filename.endswith('.pdf'):
-        # Stored in a file in the name of the user
+    # Check file size (10 MB limit)
+    file.seek(0, os.SEEK_END)
+    file_length = file.tell()
+    file.seek(0, os.SEEK_SET) # reset file pointer
+    
+    if file_length > 10 * 1024 * 1024:
+        return jsonify({"message": "File exceeds 10MB limit. Please compress it or use ZIP files."}), 400
+
+    if file and file.filename.endswith(('.pdf', '.zip')):
         username_safe = secure_filename(user["name"])
         original_filename = secure_filename(file.filename)
-        
-        # Create a user specific directory or file name
         new_filename = f"{username_safe}_{datetime.now().strftime('%Y%m%d%H%M%S')}_{original_filename}"
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], new_filename)
-        file.save(file_path)
+        
+        # Store in GridFS instead of local folder
+        file_id = fs.put(file, filename=new_filename, content_type=file.content_type)
 
         note = {
             "title": title,
             "filename": new_filename,
-            "filepath": file_path,
+            "file_id": str(file_id),
             "uploader_id": user_id,
             "uploader_name": user["name"],
             "upload_date": datetime.utcnow()
@@ -131,7 +141,22 @@ def upload_file():
         notes_collection.insert_one(note)
         return jsonify({"message": "File uploaded successfully"}), 201
 
-    return jsonify({"message": "Only PDF files are allowed"}), 400
+    return jsonify({"message": "Only PDF and ZIP files are allowed"}), 400
+
+@app.route("/api/files/<file_id>", methods=["GET"])
+def get_file(file_id):
+    try:
+        grid_out = fs.get(ObjectId(file_id))
+        return send_file(
+            io.BytesIO(grid_out.read()),
+            mimetype=grid_out.content_type,
+            as_attachment=False,
+            download_name=grid_out.filename
+        )
+    except gridfs.errors.NoFile:
+        abort(404, description="File not found")
+    except Exception as e:
+        abort(500, description="Error retrieving file")
 
 @app.route("/api/notes", methods=["GET"])
 def get_notes():
