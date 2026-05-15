@@ -2,20 +2,9 @@ import React, { useState } from 'react';
 import { Award, Star, Download, TrendingUp } from 'lucide-react';
 import './Pages.css';
 
-const TOP_STUDENTS = [
-  { id: 1, name: 'Sarah J.', dept: 'Mechanical Eng', uploads: 24, downloads: 4500, score: 980 },
-  { id: 2, name: 'Alex M.', dept: 'Computer Science', uploads: 18, downloads: 3800, score: 850 },
-  { id: 3, name: 'David K.', dept: 'Economics', uploads: 15, downloads: 2100, score: 720 },
-  { id: 4, name: 'Jessica L.', dept: 'Physics', uploads: 12, downloads: 3200, score: 680 },
-  { id: 5, name: 'Emily R.', dept: 'Chemistry', uploads: 9, downloads: 1500, score: 450 },
-];
+const TOP_STUDENTS = [];
 
-const TOP_NOTES = [
-  { id: 1, title: 'Data Structures & Algorithms Mastery', author: 'Alex M.', subject: 'CS201', rating: 4.9, downloads: 2100 },
-  { id: 2, title: 'Quantum Mechanics Visualized', author: 'Jessica L.', subject: 'PHY301', rating: 4.9, downloads: 1850 },
-  { id: 3, title: 'Macroeconomics Cheat Sheet', author: 'David K.', subject: 'ECO101', rating: 4.8, downloads: 1500 },
-  { id: 4, title: 'Fluid Mechanics Notes', author: 'Sarah J.', subject: 'ME201', rating: 4.7, downloads: 1200 },
-];
+const TOP_NOTES = [];
 
 const Leaderboard = () => {
   const [activeTab, setActiveTab] = useState('students');
@@ -59,7 +48,11 @@ const Leaderboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {TOP_STUDENTS.map((student, index) => (
+                {TOP_STUDENTS.length === 0 ? (
+                  <tr>
+                    <td colSpan="5" className="py-8 text-center text-secondary">No data available</td>
+                  </tr>
+                ) : TOP_STUDENTS.map((student, index) => (
                   <tr key={student.id} style={{ borderBottom: '1px solid var(--border-color)', transition: 'background 0.2s' }} className="hover:bg-surface">
                     <td className="py-4 px-6 font-bold" style={{ color: index < 3 ? 'var(--primary)' : 'var(--text-primary)' }}>
                       #{index + 1}
@@ -89,7 +82,11 @@ const Leaderboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {TOP_NOTES.map((note, index) => (
+                {TOP_NOTES.length === 0 ? (
+                  <tr>
+                    <td colSpan="5" className="py-8 text-center text-secondary">No data available</td>
+                  </tr>
+                ) : TOP_NOTES.map((note, index) => (
                   <tr key={note.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
                     <td className="py-4 px-6 font-bold" style={{ color: index < 3 ? 'var(--primary)' : 'var(--text-primary)' }}>
                       #{index + 1}

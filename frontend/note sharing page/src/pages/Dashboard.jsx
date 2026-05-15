@@ -107,9 +107,9 @@ const Dashboard = () => {
                 </div>
                 
                 <div className="note-card-footer">
-                  <button className="btn btn-outline w-full" style={{ justifyContent: 'center' }}>
+                  <a href={`http://localhost:5000/api/files/${note.file_id}`} target="_blank" rel="noreferrer" className="btn btn-outline w-full" style={{ justifyContent: 'center', display: 'flex', textDecoration: 'none' }}>
                     View PDF
-                  </button>
+                  </a>
                   <button className="icon-btn" title="Save to favorites">
                     <Heart size={20} />
                   </button>
