@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, Filter, BookOpen, Star, Download, Heart, UserPlus, UserCheck, Sparkles, Check } from 'lucide-react';
+import { Search, Filter, BookOpen, Star, Download, Heart, UserPlus, UserCheck, Sparkles, GraduationCap } from 'lucide-react';
 import { apiFetch, getAuthToken, getStoredUser, API_BASE } from '../utils/api';
 import './Dashboard.css';
 
 const DEPARTMENTS = [
   'All', 
+  'Science and Humanities', 
   'Information Technology', 
   'Computer Science and design', 
   'Electronics and Communication', 
   'Electronics and Electrical', 
   'Mechanical', 
   'Civil', 
-  'Science and Humanities', 
   'ECE(ACT)', 
   'ECE(VLSI)'
 ];
@@ -21,6 +21,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDept, setSelectedDept] = useState('All');
+  const [selectedYear, setSelectedYear] = useState('All'); // 'All' | '1st Year' | '2nd Year' | '3rd Year' | '4th Year'
   const [sortBy, setSortBy] = useState('recent'); // 'recent' | 'popular' | 'rated'
   const [feedMode, setFeedMode] = useState('all'); // 'all' | 'following'
   
@@ -29,6 +30,28 @@ const Dashboard = () => {
   const [savedNoteIds, setSavedNoteIds] = useState(new Set());
   const [ratingModalNote, setRatingModalNote] = useState(null);
   const [ratingInput, setRatingInput] = useState(5);
+
+  // Handle department changes and synchronize year logic
+  const handleDepartmentSelect = (dept) => {
+    setSelectedDept(dept);
+    if (dept === 'Science and Humanities') {
+      setSelectedYear('1st Year');
+    } else if (selectedYear === '1st Year') {
+      setSelectedYear('All');
+    }
+  };
+
+  // Available year options depending on selected department
+  const availableYears = useMemo(() => {
+    if (selectedDept === 'Science and Humanities') {
+      return ['1st Year'];
+    }
+    if (selectedDept === 'All') {
+      return ['All', '1st Year', '2nd Year', '3rd Year', '4th Year'];
+    }
+    // Specific Engineering Department
+    return ['All', '2nd Year', '3rd Year', '4th Year'];
+  }, [selectedDept]);
 
   // Refresh current user info & initial data
   useEffect(() => {
@@ -50,7 +73,7 @@ const Dashboard = () => {
     fetchUserData();
   }, []);
 
-  // Fetch notes when department, sort, or feed mode changes
+  // Fetch notes when department, year, sort, or feed mode changes
   useEffect(() => {
     const fetchNotes = async () => {
       setLoading(true);
@@ -61,6 +84,7 @@ const Dashboard = () => {
         } else {
           const params = new URLSearchParams();
           if (selectedDept && selectedDept !== 'All') params.append('dept', selectedDept);
+          if (selectedYear && selectedYear !== 'All') params.append('year', selectedYear);
           if (sortBy) params.append('sort', sortBy);
           if (params.toString()) {
             endpoint += `?${params.toString()}`;
@@ -80,9 +104,9 @@ const Dashboard = () => {
     };
 
     fetchNotes();
-  }, [selectedDept, sortBy, feedMode]);
+  }, [selectedDept, selectedYear, sortBy, feedMode]);
 
-  // Client-side search filtering across title, subject, uploader, department
+  // Client-side search filtering across title, subject, uploader, department, year
   const filteredNotes = useMemo(() => {
     if (!searchQuery.trim()) return notes;
     const q = searchQuery.toLowerCase();
@@ -90,7 +114,8 @@ const Dashboard = () => {
       (note.title && note.title.toLowerCase().includes(q)) ||
       (note.subject && note.subject.toLowerCase().includes(q)) ||
       (note.uploader_name && note.uploader_name.toLowerCase().includes(q)) ||
-      (note.department && note.department.toLowerCase().includes(q))
+      (note.department && note.department.toLowerCase().includes(q)) ||
+      (note.year && note.year.toLowerCase().includes(q))
     );
   }, [notes, searchQuery]);
 
@@ -122,7 +147,7 @@ const Dashboard = () => {
   };
 
   // Toggle Follow
-  const handleToggleFollow = async (targetUserId, targetName) => {
+  const handleToggleFollow = async (targetUserId) => {
     const token = getAuthToken();
     if (!token) {
       alert('Please log in to follow students.');
@@ -160,7 +185,6 @@ const Dashboard = () => {
       });
       if (res.ok) {
         const data = await res.json();
-        // Update local note rating
         setNotes(prev => prev.map(n => {
           if (n._id === ratingModalNote._id) {
             return {
@@ -197,7 +221,7 @@ const Dashboard = () => {
       <div className="dashboard-header">
         <div>
           <h1 className="mb-2">Explore Subject Notes</h1>
-          <p className="text-secondary">Discover high-quality study materials shared by college peers.</p>
+          <p className="text-secondary">Discover high-quality study materials segregated by department and year of study.</p>
         </div>
         
         <div className="search-bar-container">
@@ -206,7 +230,7 @@ const Dashboard = () => {
             <input 
               type="text" 
               className="input search-input" 
-              placeholder="Search by subject, code, or topic..." 
+              placeholder="Search by subject code, title, topic, or year..." 
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
             />
@@ -224,7 +248,7 @@ const Dashboard = () => {
       </div>
 
       {/* Feed Toggle (All vs Following) */}
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
         <button 
           className={`btn ${feedMode === 'all' ? 'btn-primary' : 'btn-outline'}`}
           onClick={() => setFeedMode('all')}
@@ -257,14 +281,14 @@ const Dashboard = () => {
               </h3>
               <ul className="filter-list">
                 {DEPARTMENTS.map((dept, index) => {
-                  const isActive = selectedDept === dept || (dept === 'All' && !selectedDept);
+                  const isActive = selectedDept === dept;
                   return (
                     <li key={index}>
                       <button 
                         className={`filter-btn ${isActive ? 'active' : ''}`}
-                        onClick={() => setSelectedDept(dept)}
+                        onClick={() => handleDepartmentSelect(dept)}
                       >
-                        {dept}
+                        {dept} {dept === 'Science and Humanities' ? '(1st Year)' : ''}
                       </button>
                     </li>
                   );
@@ -289,6 +313,45 @@ const Dashboard = () => {
 
         {/* Main Grid */}
         <main className="notes-grid-container">
+          {/* Year of Study Filter Bar */}
+          {feedMode === 'all' && (
+            <div className="glass-card mb-6" style={{ padding: '1rem 1.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <GraduationCap size={20} color="var(--primary)" />
+                  <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>
+                    {selectedDept === 'Science and Humanities' 
+                      ? '1st Year Foundation Notes' 
+                      : selectedDept === 'All' 
+                        ? 'Filter by Year of Study:' 
+                        : `${selectedDept} • Year:`}
+                  </span>
+                </div>
+
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  {availableYears.map(yearOpt => {
+                    const isActive = selectedYear === yearOpt;
+                    return (
+                      <button
+                        key={yearOpt}
+                        onClick={() => setSelectedYear(yearOpt)}
+                        className={`btn ${isActive ? 'btn-primary' : 'btn-outline'}`}
+                        style={{
+                          padding: '0.35rem 0.85rem',
+                          fontSize: '0.825rem',
+                          borderRadius: '9999px',
+                          border: isActive ? 'none' : '1px solid var(--border-color)'
+                        }}
+                      >
+                        {yearOpt === 'All' ? 'All Years' : yearOpt}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
+
           {loading ? (
             <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)' }}>
               Loading lecture notes...
@@ -297,11 +360,12 @@ const Dashboard = () => {
             <div className="empty-state text-center py-12 glass-card">
               <BookOpen size={48} className="text-secondary mx-auto mb-4" />
               <h3 className="mb-2">No notes found</h3>
-              <p className="text-secondary">
+              <p className="text-secondary mb-4">
                 {feedMode === 'following' 
-                  ? "You haven't followed any creators with notes yet. Explore all notes and follow peers!" 
-                  : "Try clearing your search query or choosing another department."}
+                  ? "You haven't followed any peers with notes yet. Explore all notes and follow contributors!" 
+                  : `No notes available for ${selectedDept !== 'All' ? selectedDept : ''} ${selectedYear !== 'All' ? `(${selectedYear})` : ''}.`}
               </p>
+              <a href="/upload" className="btn btn-primary">Share First Note for this Subject</a>
             </div>
           ) : (
             <div className="notes-grid">
@@ -316,7 +380,22 @@ const Dashboard = () => {
                       <div className="note-icon-wrapper">
                         <BookOpen size={24} color="var(--primary)" />
                       </div>
-                      <div className="note-badge">{note.department || 'General'}</div>
+                      <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', justifyContent: 'flex-end', maxWidth: '70%' }}>
+                        {note.year && (
+                          <span 
+                            className="badge" 
+                            style={{ 
+                              backgroundColor: '#EEF2FF', 
+                              color: '#4338CA', 
+                              fontWeight: 600,
+                              border: '1px solid #C7D2FE' 
+                            }}
+                          >
+                            {note.year}
+                          </span>
+                        )}
+                        <span className="note-badge">{note.department || 'General'}</span>
+                      </div>
                     </div>
                     
                     <h3 className="note-title">{note.title || note.filename}</h3>
@@ -325,7 +404,7 @@ const Dashboard = () => {
                       <p className="note-author" style={{ margin: 0 }}>By {note.uploader_name || 'Anonymous'}</p>
                       {!isAuthor && note.uploader_id && (
                         <button
-                          onClick={() => handleToggleFollow(note.uploader_id, note.uploader_name)}
+                          onClick={() => handleToggleFollow(note.uploader_id)}
                           className="btn btn-ghost"
                           style={{
                             fontSize: '0.75rem',

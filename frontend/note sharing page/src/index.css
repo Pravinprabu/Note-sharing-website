@@ -36,6 +36,8 @@ html, body {
 body {
   font-family: 'Inter', sans-serif;
   background-color: var(--bg-main);
+  background-image: radial-gradient(circle at 15% 15%, rgba(255, 248, 225, 0.45) 0%, #F8FAFC 50%, #F1F5F9 100%);
+  background-attachment: fixed;
   color: var(--text-primary);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;

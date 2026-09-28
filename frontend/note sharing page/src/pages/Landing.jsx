@@ -19,33 +19,18 @@ const Landing = () => {
               <Link to="/dashboard" className="btn btn-primary btn-lg">Explore Notes</Link>
               <Link to="/signup" className="btn btn-outline btn-lg">Join the Club</Link>
             </div>
-            
-            <div className="hero-stats">
-              <div className="stat-item">
-                <span className="stat-number">5K+</span>
-                <span className="stat-label">Students</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-number">10K+</span>
-                <span className="stat-label">Notes Shared</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-number">20+</span>
-                <span className="stat-label">Departments</span>
-              </div>
-            </div>
           </div>
           <div className="hero-visual">
             <div className="glass-card main-card">
-              <BookOpen size={48} className="card-icon" />
-              <h3>Data Structures PDF</h3>
-              <p>By Alex M. • CS Dept</p>
-              <div className="rating">⭐⭐⭐⭐⭐ 4.9</div>
+              <BookOpen size={44} className="card-icon" />
+              <h3>Course Lecture Notes</h3>
+              <p>Verified Student Uploads</p>
+              <div className="rating">⭐⭐⭐⭐⭐ Campus Repository</div>
             </div>
             <div className="glass-card secondary-card">
               <Award size={32} className="card-icon" />
-              <h3>Top Contributor</h3>
-              <p>Sarah J. (150+ notes)</p>
+              <h3>Campus Leaderboard</h3>
+              <p>Top Peer Contributors</p>
             </div>
           </div>
         </div>
