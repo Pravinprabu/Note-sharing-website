@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { BookOpen } from 'lucide-react';
+import { API_BASE, setAuthSession } from '../utils/api';
 import './Auth.css';
 
 const Login = () => {
@@ -12,15 +13,14 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:5000/auth/login', {
+      const response = await fetch(`${API_BASE}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
       const data = await response.json();
       if (response.ok) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
+        setAuthSession(data.token, data.user);
         setMessage('Login successful!');
         setTimeout(() => navigate('/dashboard'), 1000);
       } else {

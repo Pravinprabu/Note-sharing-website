@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { BookOpen } from 'lucide-react';
+import { API_BASE } from '../utils/api';
 import './Auth.css';
 
 const Signup = () => {
@@ -20,10 +21,10 @@ const Signup = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/auth/signup', {
+      const response = await fetch(`${API_BASE}/auth/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: fullname, email, password })
+        body: JSON.stringify({ name: fullname, email, password, department })
       });
       const data = await response.json();
       if (response.ok) {
