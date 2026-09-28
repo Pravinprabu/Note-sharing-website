@@ -157,7 +157,7 @@ const Profile = () => {
       </div>
 
       <div className="profile-tabs mt-8 flex justify-center mb-6">
-        <div className="tabs glass-card">
+        <div className="tabs">
           <button 
             className={`tab-btn ${activeTab === 'uploads' ? 'active' : ''}`}
             onClick={() => setActiveTab('uploads')}
@@ -186,7 +186,22 @@ const Profile = () => {
                       <div className="note-icon-wrapper">
                         <BookOpen size={24} color="var(--primary)" />
                       </div>
-                      <div className="note-badge">{note.department || 'General'}</div>
+                      <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', justifyContent: 'flex-end', maxWidth: '70%' }}>
+                        {note.year && (
+                          <span 
+                            className="badge" 
+                            style={{ 
+                              backgroundColor: '#EEF2FF', 
+                              color: '#4338CA', 
+                              fontWeight: 600,
+                              border: '1px solid #C7D2FE' 
+                            }}
+                          >
+                            {note.year}
+                          </span>
+                        )}
+                        <span className="note-badge">{note.department || 'General'}</span>
+                      </div>
                     </div>
                     
                     <h3 className="note-title">{note.title || note.filename}</h3>
@@ -247,7 +262,22 @@ const Profile = () => {
                       <div className="note-icon-wrapper">
                         <BookOpen size={24} color="var(--primary)" />
                       </div>
-                      <div className="note-badge">{note.department || 'Notes'}</div>
+                      <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', justifyContent: 'flex-end', maxWidth: '70%' }}>
+                        {note.year && (
+                          <span 
+                            className="badge" 
+                            style={{ 
+                              backgroundColor: '#EEF2FF', 
+                              color: '#4338CA', 
+                              fontWeight: 600,
+                              border: '1px solid #C7D2FE' 
+                            }}
+                          >
+                            {note.year}
+                          </span>
+                        )}
+                        <span className="note-badge">{note.department || 'Notes'}</span>
+                      </div>
                     </div>
                     
                     <h3 className="note-title">{note.title || note.filename}</h3>

@@ -41,7 +41,7 @@ const Leaderboard = () => {
       </div>
 
       <div className="tabs-container flex justify-center mb-8">
-        <div className="tabs glass-card" style={{ display: 'inline-flex', padding: '0.5rem', borderRadius: 'var(--radius-lg)' }}>
+        <div className="tabs">
           <button 
             className={`tab-btn ${activeTab === 'students' ? 'active' : ''}`}
             onClick={() => setActiveTab('students')}

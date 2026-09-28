@@ -52,6 +52,7 @@ def serialize_note(note):
     note["rating_count"] = len(note.get("ratings", []))
     note["department"] = note.get("department", "")
     note["subject"] = note.get("subject", "")
+    note["year"] = note.get("year", "")
     return note
 
 @app.route("/")
@@ -247,6 +248,12 @@ def upload_file():
     title = request.form.get("title", "Untitled Document").strip()
     department = request.form.get("dept", request.form.get("department", "")).strip()
     subject = request.form.get("subject", "").strip()
+    year = request.form.get("year", request.form.get("year_of_study", "")).strip()
+
+    # Rule: 1st year notes all belong to Science and Humanities
+    if year == "1st Year" or department.lower() == "science and humanities":
+        department = "Science and Humanities"
+        year = "1st Year"
 
     if file.filename == '':
         return jsonify({"message": "No selected file"}), 400
@@ -271,6 +278,7 @@ def upload_file():
             "title": title or "Untitled Document",
             "department": department,
             "subject": subject,
+            "year": year,
             "filename": new_filename,
             "original_filename": original_filename,
             "file_id": str(file_id),
@@ -342,6 +350,7 @@ def delete_note(note_id):
 @app.route("/api/notes", methods=["GET"])
 def get_notes():
     dept = request.args.get("dept", "").strip()
+    year = request.args.get("year", "").strip()
     search = request.args.get("search", "").strip()
     sort_by = request.args.get("sort", "recent").strip()
     uploader_id = request.args.get("uploader_id", "").strip()
@@ -350,12 +359,16 @@ def get_notes():
     if dept and dept.lower() != "all":
         query["department"] = {"$regex": f"^{dept}$", "$options": "i"}
 
+    if year and year.lower() != "all":
+        query["year"] = {"$regex": f"^{year}$", "$options": "i"}
+
     if search:
         query["$or"] = [
             {"title": {"$regex": search, "$options": "i"}},
             {"subject": {"$regex": search, "$options": "i"}},
             {"uploader_name": {"$regex": search, "$options": "i"}},
-            {"department": {"$regex": search, "$options": "i"}}
+            {"department": {"$regex": search, "$options": "i"}},
+            {"year": {"$regex": search, "$options": "i"}}
         ]
 
     if uploader_id:

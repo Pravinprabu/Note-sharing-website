@@ -1,0 +1,107 @@
+.floating-background-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.floating-element {
+  position: absolute;
+  opacity: 0.12;
+  color: #64748B;
+  transition: opacity 0.3s ease;
+  will-change: transform;
+}
+
+.floating-element.amber {
+  color: #D97706;
+  opacity: 0.14;
+}
+
+.floating-element.indigo {
+  color: #4F46E5;
+  opacity: 0.11;
+}
+
+.floating-element.teal {
+  color: #0D9488;
+  opacity: 0.12;
+}
+
+/* Animations */
+.float-1 {
+  animation: floatMotion1 16s ease-in-out infinite;
+}
+
+.float-2 {
+  animation: floatMotion2 22s ease-in-out infinite;
+}
+
+.float-3 {
+  animation: floatMotion3 19s ease-in-out infinite;
+}
+
+.float-4 {
+  animation: floatMotion4 25s ease-in-out infinite;
+}
+
+@keyframes floatMotion1 {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-18px) rotate(6deg);
+  }
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+}
+
+@keyframes floatMotion2 {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(16px) rotate(-8deg);
+  }
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+}
+
+@keyframes floatMotion3 {
+  0% {
+    transform: translate(0px, 0px) rotate(0deg);
+  }
+  50% {
+    transform: translate(8px, -14px) rotate(10deg);
+  }
+  100% {
+    transform: translate(0px, 0px) rotate(0deg);
+  }
+}
+
+@keyframes floatMotion4 {
+  0% {
+    transform: translate(0px, 0px) rotate(0deg);
+  }
+  50% {
+    transform: translate(-10px, 12px) rotate(-6deg);
+  }
+  100% {
+    transform: translate(0px, 0px) rotate(0deg);
+  }
+}
+
+/* Hide some floating elements on mobile to prevent clutter */
+@media (max-width: 768px) {
+  .floating-element {
+    opacity: 0.08;
+  }
+  
+  .hide-on-mobile {
+    display: none !important;
+  }
+}
