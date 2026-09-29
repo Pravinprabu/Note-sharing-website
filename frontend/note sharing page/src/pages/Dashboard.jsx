@@ -288,7 +288,28 @@ const Dashboard = () => {
                         className={`filter-btn ${isActive ? 'active' : ''}`}
                         onClick={() => handleDepartmentSelect(dept)}
                       >
-                        {dept} {dept === 'Science and Humanities' ? '(1st Year)' : ''}
+                        {dept === 'Science and Humanities' ? (
+                          <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', gap: '0.4rem', flexWrap: 'wrap' }}>
+                            <span>Science and Humanities</span>
+                            <span 
+                              style={{ 
+                                fontSize: '0.72rem', 
+                                padding: '0.15rem 0.45rem', 
+                                borderRadius: '9999px', 
+                                backgroundColor: isActive ? 'rgba(255, 255, 255, 0.9)' : '#EEF2FF', 
+                                color: '#4338CA', 
+                                fontWeight: 600,
+                                whiteSpace: 'nowrap',
+                                border: '1px solid #C7D2FE',
+                                display: 'inline-block'
+                              }}
+                            >
+                              (1st&nbsp;Year)
+                            </span>
+                          </span>
+                        ) : (
+                          dept
+                        )}
                       </button>
                     </li>
                   );
@@ -380,7 +401,7 @@ const Dashboard = () => {
                       <div className="note-icon-wrapper">
                         <BookOpen size={24} color="var(--primary)" />
                       </div>
-                      <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', justifyContent: 'flex-end', maxWidth: '70%' }}>
+                      <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', justifyContent: 'flex-end', maxWidth: '75%', minWidth: 0 }}>
                         {note.year && (
                           <span 
                             className="badge" 
@@ -400,8 +421,8 @@ const Dashboard = () => {
                     
                     <h3 className="note-title">{note.title || note.filename}</h3>
                     
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                      <p className="note-author" style={{ margin: 0 }}>By {note.uploader_name || 'Anonymous'}</p>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                      <p className="note-author" style={{ margin: 0, wordBreak: 'break-word' }}>By {note.uploader_name || 'Anonymous'}</p>
                       {!isAuthor && note.uploader_id && (
                         <button
                           onClick={() => handleToggleFollow(note.uploader_id)}

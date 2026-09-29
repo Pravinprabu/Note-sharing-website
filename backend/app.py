@@ -258,13 +258,13 @@ def upload_file():
     if file.filename == '':
         return jsonify({"message": "No selected file"}), 400
     
-    # Check file size (10 MB limit)
+    # Check file size (20 MB limit)
     file.seek(0, os.SEEK_END)
     file_length = file.tell()
     file.seek(0, os.SEEK_SET) # reset file pointer
     
-    if file_length > 10 * 1024 * 1024:
-        return jsonify({"message": "File exceeds 10MB limit. Please compress it or use ZIP files."}), 400
+    if file_length > 20 * 1024 * 1024:
+        return jsonify({"message": "File exceeds 20MB limit. Please compress it or use ZIP files."}), 400
 
     filename_lower = file.filename.lower()
     if filename_lower.endswith(('.pdf', '.zip')):

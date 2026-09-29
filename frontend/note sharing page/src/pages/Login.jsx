@@ -45,7 +45,10 @@ const Login = () => {
         <form className="auth-form" onSubmit={handleLogin}>
           <div className="input-group">
             <label htmlFor="email">Email Address</label>
-            <input type="email" id="email" className="input" placeholder="student@college.edu" required value={email} onChange={e => setEmail(e.target.value)} />
+            <input type="email" id="email" className="input" placeholder="(eg: 241025.it@rmkec.ac.in or 24it1025@rmkec.ac.in)" required value={email} onChange={e => setEmail(e.target.value)} />
+            <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.35rem' }}>
+              e.g. <strong>241025.it@rmkec.ac.in</strong> or <strong>24it1025@rmkec.ac.in</strong>
+            </span>
           </div>
           <div className="input-group">
             <label htmlFor="password">Password</label>

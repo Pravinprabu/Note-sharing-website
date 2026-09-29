@@ -52,28 +52,31 @@ const Signup = () => {
         <form className="auth-form" onSubmit={handleSignup}>
           <div className="input-group">
             <label htmlFor="fullname">Full Name</label>
-            <input type="text" id="fullname" className="input" placeholder="Alex Morgan" required value={fullname} onChange={e => setFullname(e.target.value)} />
+            <input type="text" id="fullname" className="input" placeholder="(eg: Rahul Sharma)" required value={fullname} onChange={e => setFullname(e.target.value)} />
           </div>
           
           <div className="input-group">
             <label htmlFor="department">Department</label>
             <select id="department" className="input" required value={department} onChange={e => setDepartment(e.target.value)}>
                <option value="" disabled>Select your department</option>
-               <option value="it">Information Technology</option>
-               <option value="csd">Computer Science and design</option>
-               <option value="ece">Electronics and Communication</option>
-               <option value="eee">Electronics and Electrical</option>
-               <option value="mech">Mechanical</option>
-               <option value="civil">Civil</option>
-               <option value="sh">Science and Humanities</option>
-               <option value="ece_act">ECE(ACT)</option>
-               <option value="ece_vlsi">ECE(VLSI)</option>
+               <option value="Information Technology">Information Technology</option>
+               <option value="Computer Science and design">Computer Science and design</option>
+               <option value="Electronics and Communication">Electronics and Communication</option>
+               <option value="Electronics and Electrical">Electronics and Electrical</option>
+               <option value="Mechanical">Mechanical</option>
+               <option value="Civil">Civil</option>
+               <option value="Science and Humanities">Science and Humanities</option>
+               <option value="ECE(ACT)">ECE(ACT)</option>
+               <option value="ECE(VLSI)">ECE(VLSI)</option>
             </select>
           </div>
 
           <div className="input-group">
             <label htmlFor="email">College Email</label>
-            <input type="email" id="email" className="input" placeholder="student@college.edu" required value={email} onChange={e => setEmail(e.target.value)} />
+            <input type="email" id="email" className="input" placeholder="(eg: 241025.it@rmkec.ac.in or 24it1025@rmkec.ac.in)" required value={email} onChange={e => setEmail(e.target.value)} />
+            <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.35rem' }}>
+              e.g. <strong>241025.it@rmkec.ac.in</strong> or <strong>24it1025@rmkec.ac.in</strong>
+            </span>
           </div>
           <div className="input-group">
             <label htmlFor="password">Password</label>

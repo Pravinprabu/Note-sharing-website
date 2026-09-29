@@ -180,6 +180,10 @@
 
 /* Table Card */
 .table-card {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   background-color: var(--bg-surface);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-color);
@@ -283,5 +287,49 @@ tbody tr:hover {
 
   .my-notes-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Extra Small Smart Phones (<= 380px, e.g. Realme / Android 360px Viewports) */
+@media (max-width: 380px) {
+  .upload-container {
+    padding: 1rem 0.65rem;
+  }
+
+  .upload-dropzone {
+    padding: 1.5rem 0.5rem;
+  }
+
+  .tab-btn {
+    padding: 0.4rem 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .profile-info-card {
+    padding: 1rem 0.65rem;
+  }
+
+  .profile-avatar {
+    width: 60px;
+    height: 60px;
+  }
+
+  .profile-stats {
+    gap: 0.35rem;
+  }
+
+  .stat-val {
+    font-size: 1rem;
+  }
+
+  .stat-lbl {
+    font-size: 0.7rem;
+  }
+
+  .table-card th, 
+  .table-card td {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    font-size: 0.8rem;
   }
 }
