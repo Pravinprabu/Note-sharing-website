@@ -1,4 +1,6 @@
 import os
+import random
+import requests
 from flask import Flask, jsonify, request, send_file, abort
 from flask_cors import CORS
 from pymongo import MongoClient
@@ -20,10 +22,16 @@ CORS(app)
 MONGO_URI = os.getenv("MONGO_URI")
 JWT_SECRET = os.getenv("JWT_SECRET", "super_secret_key")
 
+EMAILJS_SERVICE_ID = os.getenv("EMAILJS_SERVICE_ID", "service_swnkpo6")
+EMAILJS_TEMPLATE_ID = os.getenv("EMAILJS_TEMPLATE_ID", "template_llo5jua")
+EMAILJS_PUBLIC_KEY = os.getenv("EMAILJS_PUBLIC_KEY", "b4A-HfBLGaxF8Qnta")
+EMAILJS_PRIVATE_KEY = os.getenv("EMAILJS_PRIVATE_KEY", "eRtqKzpDqa0sknHDDUhYY")
+
 client = MongoClient(MONGO_URI)
 db = client.get_database("notesharing") # Explicitly specify the database
 users_collection = db["users"]
 notes_collection = db["notes"]
+password_resets_collection = db["password_resets"]
 fs = gridfs.GridFS(db)
 
 UPLOAD_FOLDER = 'uploads'
@@ -126,6 +134,122 @@ def login():
         }), 200
     else:
         return jsonify({"message": "Invalid credentials"}), 401
+
+# ----------------- FORGOT & RESET PASSWORD (EMAILJS) -----------------
+
+@app.route("/auth/forgot-password", methods=["POST"])
+def forgot_password():
+    data = request.json or {}
+    email = data.get("email", "").strip().lower()
+
+    if not email:
+        return jsonify({"message": "Please provide your college email address."}), 400
+
+    user = users_collection.find_one({"email": {"$regex": f"^{email}$", "$options": "i"}})
+    if not user:
+        return jsonify({"message": "No registered account found with this email."}), 404
+
+    # Generate secure 6-digit OTP
+    otp = str(random.randint(100000, 999999))
+    expires_at = datetime.utcnow() + timedelta(minutes=10)
+
+    # Save / update in password_resets collection
+    password_resets_collection.update_one(
+        {"email": user["email"]},
+        {"$set": {"otp": otp, "expires_at": expires_at}},
+        upsert=True
+    )
+
+    # Dispatch email using EmailJS REST API
+    user_name = user.get("name", "Student")
+    valid_till_str = (datetime.utcnow() + timedelta(minutes=15) + timedelta(hours=5, minutes=30)).strftime("%I:%M %p IST")
+    emailjs_payload = {
+        "service_id": EMAILJS_SERVICE_ID,
+        "template_id": EMAILJS_TEMPLATE_ID,
+        "user_id": EMAILJS_PUBLIC_KEY,
+        "accessToken": EMAILJS_PRIVATE_KEY,
+        "template_params": {
+            "to_email": user["email"],
+            "email": user["email"],
+            "recipient": user["email"],
+            "to_name": user_name,
+            "name": user_name,
+            "user_name": user_name,
+            "otp": otp,
+            "OTP": otp,
+            "otp_code": otp,
+            "OTP_CODE": otp,
+            "code": otp,
+            "CODE": otp,
+            "passcode": otp,
+            "PASSCODE": otp,
+            "token": otp,
+            "TOKEN": otp,
+            "auth_code": otp,
+            "AUTH_CODE": otp,
+            "one_time_password": otp,
+            "password": otp,
+            "valid_till": valid_till_str,
+            "time": valid_till_str,
+            "expiry_time": valid_till_str,
+            "company_name": "RMKEC Notes",
+            "message": f"Your password reset OTP is {otp}."
+        }
+    }
+
+    try:
+        res = requests.post(
+            "https://api.emailjs.com/api/v1.0/email/send",
+            json=emailjs_payload,
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        if res.status_code == 200:
+            return jsonify({"message": "A 6-digit OTP has been sent to your email. Please check your inbox (and spam folder)."}), 200
+        else:
+            print(f"[EmailJS Error] Status {res.status_code}: {res.text}")
+            return jsonify({"message": "Failed to send email. Please check your EmailJS settings or try again."}), 500
+    except Exception as e:
+        print(f"[EmailJS Exception] {str(e)}")
+        return jsonify({"message": "Error connecting to email service. Please try again later."}), 500
+
+
+@app.route("/auth/reset-password", methods=["POST"])
+def reset_password():
+    data = request.json or {}
+    email = data.get("email", "").strip().lower()
+    otp = str(data.get("otp", "")).strip()
+    new_password = data.get("new_password", "")
+
+    if not email or not otp or not new_password:
+        return jsonify({"message": "Email, OTP, and new password are all required."}), 400
+
+    if len(new_password) < 6:
+        return jsonify({"message": "New password must be at least 6 characters long."}), 400
+
+    # Look up OTP record
+    record = password_resets_collection.find_one({"email": {"$regex": f"^{email}$", "$options": "i"}})
+    if not record:
+        return jsonify({"message": "No active reset request found for this email. Please request a new OTP."}), 400
+
+    if datetime.utcnow() > record.get("expires_at", datetime.min):
+        password_resets_collection.delete_one({"_id": record["_id"]})
+        return jsonify({"message": "The OTP has expired. Please request a new one."}), 400
+
+    if str(record.get("otp", "")).strip() != otp:
+        return jsonify({"message": "Invalid OTP. Please check the 6-digit code sent to your email."}), 400
+
+    # Hash new password and update user
+    hashed_password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt())
+    users_collection.update_one(
+        {"email": {"$regex": f"^{email}$", "$options": "i"}},
+        {"$set": {"password": hashed_password}}
+    )
+
+    # Clean up OTP record
+    password_resets_collection.delete_one({"_id": record["_id"]})
+
+    return jsonify({"message": "Password reset successfully! You can now log in with your new password."}), 200
 
 # ----------------- USER PROFILE & SOCIAL -----------------
 
