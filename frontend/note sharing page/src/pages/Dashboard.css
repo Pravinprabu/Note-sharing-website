@@ -51,8 +51,8 @@
 /* Content Layout */
 .dashboard-content {
   display: grid;
-  grid-template-columns: 240px 1fr;
-  gap: 2.5rem;
+  grid-template-columns: 270px 1fr;
+  gap: 2rem;
   align-items: start;
 }
 
@@ -97,7 +97,9 @@
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s;
-  white-space: nowrap;
+  white-space: normal;
+  line-height: 1.35;
+  box-sizing: border-box;
 }
 
 .filter-btn:hover {
@@ -307,13 +309,54 @@
 @media (max-width: 480px) {
   .notes-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
   .dashboard-header h1 {
-    font-size: 1.5rem;
+    font-size: 1.35rem;
+  }
+
+  .note-card {
+    padding: 1rem;
   }
 
   .note-title {
-    font-size: 1.05rem;
+    font-size: 1rem;
+  }
+
+  .note-badge {
+    max-width: 110px;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+  }
+}
+
+/* Extra Small Mobile (<= 380px, e.g. Realme / Android 360px Viewports) */
+@media (max-width: 380px) {
+  .dashboard-header {
+    gap: 0.75rem;
+  }
+
+  .dashboard-header h1 {
+    font-size: 1.25rem;
+  }
+
+  .note-card {
+    padding: 0.85rem;
+  }
+
+  .note-card-footer {
+    gap: 0.5rem;
+  }
+
+  .note-card-footer .btn {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .icon-btn {
+    width: 2.25rem;
+    height: 2.25rem;
   }
 }

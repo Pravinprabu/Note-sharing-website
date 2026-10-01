@@ -157,3 +157,24 @@
     display: block;
   }
 }
+
+@media (max-width: 480px) {
+  .nav-container {
+    height: 3.5rem;
+  }
+
+  .nav-logo {
+    font-size: 1.15rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .nav-container {
+    height: 3.25rem;
+  }
+
+  .nav-logo {
+    font-size: 1.05rem;
+    gap: 0.35rem;
+  }
+}

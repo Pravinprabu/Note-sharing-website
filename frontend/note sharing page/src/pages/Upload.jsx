@@ -32,6 +32,29 @@ const Upload = () => {
     }
   };
 
+  const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20 MB
+
+  const validateAndSetFile = (selectedFile) => {
+    if (!selectedFile) return;
+    const name = selectedFile.name.toLowerCase();
+    if (!name.endsWith('.pdf') && !name.endsWith('.zip')) {
+      alert('Only PDF and ZIP files are allowed.');
+      setMessage('Only PDF and ZIP files are allowed.');
+      setIsSuccess(false);
+      return;
+    }
+
+    if (selectedFile.size > MAX_FILE_SIZE) {
+      alert('File size exceeds 20MB! Please upload files under 20MB, or try compressing multiple documents into a ZIP file.');
+      setMessage('File exceeds 20MB limit. Please compress it or use a ZIP file.');
+      setIsSuccess(false);
+      return;
+    }
+
+    setFile(selectedFile);
+    setMessage('');
+  };
+
   const handleDragOver = (e) => {
     e.preventDefault();
     setIsDragging(true);
@@ -46,22 +69,13 @@ const Upload = () => {
     e.preventDefault();
     setIsDragging(false);
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const droppedFile = e.dataTransfer.files[0];
-      const name = droppedFile.name.toLowerCase();
-      if (name.endsWith('.pdf') || name.endsWith('.zip')) {
-        setFile(droppedFile);
-        setMessage('');
-      } else {
-        setMessage('Only PDF and ZIP files are allowed.');
-        setIsSuccess(false);
-      }
+      validateAndSetFile(e.dataTransfer.files[0]);
     }
   };
 
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files.length > 0) {
-      setFile(e.target.files[0]);
-      setMessage('');
+      validateAndSetFile(e.target.files[0]);
     }
   };
 
@@ -174,7 +188,7 @@ const Upload = () => {
                 <UploadCloud size={48} color="var(--primary)" style={{ margin: '0 auto 1rem auto' }} />
                 <h3 className="mb-2">Drag and drop file here, or click to browse</h3>
                 <p className="text-secondary mb-4">Select lecture notes from your computer</p>
-                <p className="text-secondary text-sm">Supported formats: PDF, ZIP (Max 10MB)</p>
+                <p className="text-secondary text-sm">Supported formats: PDF, ZIP (Max 20MB)</p>
               </>
             )}
           </div>
