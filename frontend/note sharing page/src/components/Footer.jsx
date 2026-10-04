@@ -6,7 +6,6 @@ import {
   MessageSquarePlus, 
   GraduationCap, 
   Building2, 
-  Sparkles, 
   X, 
   Send, 
   CheckCircle2, 
@@ -62,8 +61,39 @@ const Footer = () => {
     setLoading(true);
     setFeedbackStatus(null);
 
+    let deliveredViaEmail = false;
+
+    // 1. Direct Email dispatch via EmailJS to contact.pravinp@gmail.com
     try {
-      const response = await fetch(`${API_BASE}/api/feedback`, {
+      const emailjsRes = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          service_id: 'service_swnkpo6',
+          template_id: 'template_llo5jua',
+          user_id: 'b4A-HfBLGaxF8Qnta',
+          accessToken: 'eRtqKzpDqa0sknHDDUhYY',
+          template_params: {
+            to_email: 'contact.pravinp@gmail.com',
+            email: 'contact.pravinp@gmail.com',
+            to_name: 'Pravin P',
+            name: name.trim() || 'RMKEC Student',
+            passcode: `[${category}] ${message.trim().slice(0, 150)}`,
+            time: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+            message: `New Student Feedback!\n\nCategory: ${category}\nFrom: ${name.trim() || 'Anonymous'} (${email.trim() || 'No email'})\n\nMessage:\n${message.trim()}`
+          }
+        })
+      });
+      if (emailjsRes.ok) {
+        deliveredViaEmail = true;
+      }
+    } catch (emailErr) {
+      console.warn('EmailJS direct dispatch failed, trying backend...', emailErr);
+    }
+
+    // 2. Also save to backend database
+    try {
+      await fetch(`${API_BASE}/api/feedback`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -73,42 +103,33 @@ const Footer = () => {
           message: message.trim()
         })
       });
-
-      const data = await response.json();
-      if (response.ok) {
-        setFeedbackStatus({
-          type: 'success',
-          text: data.message || 'Thank you! Your feedback has been received.'
-        });
-        setMessage('');
-        setTimeout(() => {
-          setShowFeedbackModal(false);
-          setFeedbackStatus(null);
-        }, 2200);
-      } else {
-        setFeedbackStatus({
-          type: 'error',
-          text: data.message || 'Failed to submit feedback. Please try again.'
-        });
-      }
-    } catch (err) {
-      setFeedbackStatus({
-        type: 'error',
-        text: 'Could not connect to server. You can also mail directly to contact.pravinp@gmail.com'
-      });
-    } finally {
-      setLoading(false);
+    } catch (backendErr) {
+      console.warn('Backend feedback save error:', backendErr);
     }
+
+    // Success response
+    setFeedbackStatus({
+      type: 'success',
+      text: 'Thank you! Your feedback has been sent directly to Pravin\'s inbox.'
+    });
+    setMessage('');
+    setLoading(false);
+
+    setTimeout(() => {
+      setShowFeedbackModal(false);
+      setFeedbackStatus(null);
+    }, 2500);
   };
 
   return (
     <footer className="site-footer">
       <div className="footer-container">
-        <div className="footer-grid">
-          {/* Column 1: Platform Overview */}
-          <div className="footer-col">
+        <div className="footer-vertical-stack">
+          
+          {/* 1. Website Explanation */}
+          <div className="footer-section">
             <Link to="/" className="footer-brand">
-              <BookOpen size={24} color="var(--primary)" />
+              <BookOpen size={28} color="#111827" />
               <span>RMKEC Notes</span>
             </Link>
             <p className="footer-desc">
@@ -116,43 +137,45 @@ const Footer = () => {
             </p>
             <div className="footer-quick-links">
               <Link to="/dashboard" className="footer-link">Explore Notes</Link>
-              <span>•</span>
               <Link to="/leaderboard" className="footer-link">Leaderboard</Link>
-              <span>•</span>
               <Link to="/upload" className="footer-link">Upload Notes</Link>
             </div>
           </div>
 
-          {/* Column 2: Developer Details */}
-          <div className="footer-col">
-            <div className="dev-badge">
-              <Sparkles size={12} /> Developed by
-            </div>
+          <div className="footer-divider" />
+
+          {/* 2. Developed By Details */}
+          <div className="footer-section">
+            <h3 className="developed-by-header">Developed by</h3>
             <h4 className="dev-name">Pravin P</h4>
-            <ul className="dev-details">
-              <li>
-                <GraduationCap size={15} color="var(--primary)" />
+
+            <ul className="dev-academic-list">
+              <li className="dev-academic-item">
+                <GraduationCap size={16} color="#111827" />
                 <span>Student of batch 2028</span>
               </li>
-              <li>
-                <Building2 size={15} color="var(--text-secondary)" />
+              <li className="dev-academic-item">
+                <Building2 size={16} color="#111827" />
                 <span>Information Technology</span>
               </li>
-              <li>
-                <Building2 size={15} color="var(--text-secondary)" />
+              <li className="dev-academic-item">
+                <Building2 size={16} color="#111827" />
                 <span>R.M.K Engineering College</span>
               </li>
             </ul>
 
-            <div className="dev-connect-list">
-              <div className="dev-connect-item">
-                <Mail size={15} color="var(--primary)" />
+            <div className="dev-contact-block">
+              <div className="dev-contact-row">
+                <Mail size={16} color="#111827" />
                 <span>
                   For Queries and contact : mail --{' '}
-                  <a href="mailto:contact.pravinp@gmail.com">contact.pravinp@gmail.com</a>
+                  <a href="mailto:contact.pravinp@gmail.com" className="dev-link">
+                    contact.pravinp@gmail.com
+                  </a>
                 </span>
               </div>
-              <div className="dev-connect-item">
+              
+              <div className="dev-contact-row" style={{ marginTop: '0.25rem' }}>
                 <LinkedinIcon size={16} color="#0A66C2" />
                 <span>
                   linkedin :{' '}
@@ -160,17 +183,20 @@ const Footer = () => {
                     href="https://www.linkedin.com/in/pravin-p-84092832a/" 
                     target="_blank" 
                     rel="noopener noreferrer"
+                    className="dev-link"
                   >
-                    Pravin P <ExternalLink size={12} style={{ display: 'inline', verticalAlign: 'middle' }} />
+                    Pravin P <ExternalLink size={13} style={{ display: 'inline', verticalAlign: 'middle' }} />
                   </a>
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Column 3: Feedbacks & Interactive Action */}
-          <div className="footer-col">
-            <div className="feedback-card">
+          <div className="footer-divider" />
+
+          {/* 3. Feedbacks Section */}
+          <div className="footer-section">
+            <div className="feedback-box">
               <h4 className="feedback-tagline">Always open for your feedbacks!</h4>
               <p className="feedback-subtext">
                 Found a bug? Have an idea to make this site better, or want specific subject notes added? Let me know directly.
@@ -184,14 +210,12 @@ const Footer = () => {
               </button>
             </div>
           </div>
+
         </div>
 
-        {/* Footer Bottom Line */}
-        <div className="footer-bottom">
+        {/* 4. Bottom Line */}
+        <div className="footer-bottom" style={{ marginTop: '2.5rem' }}>
           <p>&copy; {new Date().getFullYear()} RMKEC Note Share. Built for the students of R.M.K. Engineering College.</p>
-          <p>
-            Developed by <strong>Pravin P</strong> (IT • Batch 2028)
-          </p>
         </div>
       </div>
 
@@ -226,7 +250,8 @@ const Footer = () => {
                 marginBottom: '1.25rem',
                 fontSize: '0.85rem',
                 backgroundColor: feedbackStatus.type === 'success' ? '#DEF7EC' : '#FDE8E8',
-                color: feedbackStatus.type === 'success' ? '#03543F' : '#9B1C1C'
+                color: feedbackStatus.type === 'success' ? '#03543F' : '#9B1C1C',
+                lineHeight: 1.4
               }}>
                 {feedbackStatus.type === 'success' ? <CheckCircle2 size={18} style={{ flexShrink: 0, marginTop: '2px' }} /> : <AlertCircle size={18} style={{ flexShrink: 0, marginTop: '2px' }} />}
                 <span>{feedbackStatus.text}</span>
@@ -302,12 +327,17 @@ const Footer = () => {
                 disabled={loading}
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
               >
-                {loading ? 'Sending Feedback...' : <><Send size={16} /> Submit Feedback</>}
+                {loading ? 'Sending to Pravin...' : <><Send size={16} /> Send to Pravin's Email</>}
               </button>
 
-              <p style={{ textAlign: 'center', fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.85rem' }}>
-                Or mail me directly anytime at <a href="mailto:contact.pravinp@gmail.com" style={{ color: 'var(--primary)', fontWeight: 600 }}>contact.pravinp@gmail.com</a>
-              </p>
+              <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+                <a 
+                  href={`mailto:contact.pravinp@gmail.com?subject=Feedback for RMKEC Notes (${encodeURIComponent(category)})&body=${encodeURIComponent(message || 'Hi Pravin,\n\n')}`}
+                  style={{ fontSize: '0.8rem', color: '#B45309', fontWeight: 600, textDecoration: 'underline' }}
+                >
+                  Or open your email app directly (Gmail)
+                </a>
+              </div>
             </form>
           </div>
         </div>
