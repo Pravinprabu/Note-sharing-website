@@ -32,6 +32,7 @@ db = client.get_database("notesharing") # Explicitly specify the database
 users_collection = db["users"]
 notes_collection = db["notes"]
 password_resets_collection = db["password_resets"]
+feedbacks_collection = db["feedbacks"]
 fs = gridfs.GridFS(db)
 
 UPLOAD_FOLDER = 'uploads'
@@ -678,6 +679,30 @@ def get_leaderboard():
         }), 200
     except Exception as e:
         return jsonify({"message": f"Error calculating leaderboard: {str(e)}"}), 500
+
+# ----------------- FEEDBACK ENDPOINT -----------------
+
+@app.route("/api/feedback", methods=["POST"])
+def submit_feedback():
+    data = request.json or {}
+    feedback_text = data.get("message", "").strip()
+    sender_name = data.get("name", "").strip() or "Anonymous Student"
+    sender_email = data.get("email", "").strip() or "Not provided"
+    category = data.get("category", "General Feedback")
+
+    if not feedback_text:
+        return jsonify({"message": "Please write your feedback before submitting."}), 400
+
+    feedback_doc = {
+        "name": sender_name,
+        "email": sender_email,
+        "category": category,
+        "message": feedback_text,
+        "created_at": datetime.utcnow()
+    }
+    feedbacks_collection.insert_one(feedback_doc)
+
+    return jsonify({"message": "Thank you! Your feedback has been received."}), 201
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
