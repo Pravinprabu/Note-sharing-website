@@ -61,11 +61,9 @@ const Footer = () => {
     setLoading(true);
     setFeedbackStatus(null);
 
-    let deliveredViaEmail = false;
-
-    // 1. Direct Email dispatch via EmailJS to contact.pravinp@gmail.com
+    // 1. Send straight to Pravin's email via EmailJS
     try {
-      const emailjsRes = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+      await fetch('https://api.emailjs.com/api/v1.0/email/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -84,11 +82,8 @@ const Footer = () => {
           }
         })
       });
-      if (emailjsRes.ok) {
-        deliveredViaEmail = true;
-      }
     } catch (emailErr) {
-      console.warn('EmailJS direct dispatch failed, trying backend...', emailErr);
+      console.warn('EmailJS direct dispatch notice:', emailErr);
     }
 
     // 2. Also save to backend database
@@ -104,10 +99,9 @@ const Footer = () => {
         })
       });
     } catch (backendErr) {
-      console.warn('Backend feedback save error:', backendErr);
+      console.warn('Backend feedback save notice:', backendErr);
     }
 
-    // Success response
     setFeedbackStatus({
       type: 'success',
       text: 'Thank you! Your feedback has been sent directly to Pravin\'s inbox.'
@@ -124,12 +118,12 @@ const Footer = () => {
   return (
     <footer className="site-footer">
       <div className="footer-container">
-        <div className="footer-vertical-stack">
+        <div className="footer-grid">
           
-          {/* 1. Website Explanation */}
-          <div className="footer-section">
+          {/* Column 1: Website Explanation */}
+          <div className="footer-col">
             <Link to="/" className="footer-brand">
-              <BookOpen size={28} color="#111827" />
+              <BookOpen size={26} color="#111827" />
               <span>RMKEC Notes</span>
             </Link>
             <p className="footer-desc">
@@ -142,31 +136,29 @@ const Footer = () => {
             </div>
           </div>
 
-          <div className="footer-divider" />
-
-          {/* 2. Developed By Details */}
-          <div className="footer-section">
+          {/* Column 2: Developer Details */}
+          <div className="footer-col">
             <h3 className="developed-by-header">Developed by</h3>
             <h4 className="dev-name">Pravin P</h4>
 
-            <ul className="dev-academic-list">
-              <li className="dev-academic-item">
+            <ul className="dev-details-list">
+              <li>
                 <GraduationCap size={16} color="#111827" />
                 <span>Student of batch 2028</span>
               </li>
-              <li className="dev-academic-item">
+              <li>
                 <Building2 size={16} color="#111827" />
                 <span>Information Technology</span>
               </li>
-              <li className="dev-academic-item">
+              <li>
                 <Building2 size={16} color="#111827" />
                 <span>R.M.K Engineering College</span>
               </li>
             </ul>
 
-            <div className="dev-contact-block">
-              <div className="dev-contact-row">
-                <Mail size={16} color="#111827" />
+            <div className="dev-connect-list">
+              <div className="dev-connect-item">
+                <Mail size={15} color="#111827" />
                 <span>
                   For Queries and contact : mail --{' '}
                   <a href="mailto:contact.pravinp@gmail.com" className="dev-link">
@@ -175,7 +167,7 @@ const Footer = () => {
                 </span>
               </div>
               
-              <div className="dev-contact-row" style={{ marginTop: '0.25rem' }}>
+              <div className="dev-connect-item">
                 <LinkedinIcon size={16} color="#0A66C2" />
                 <span>
                   linkedin :{' '}
@@ -185,17 +177,15 @@ const Footer = () => {
                     rel="noopener noreferrer"
                     className="dev-link"
                   >
-                    Pravin P <ExternalLink size={13} style={{ display: 'inline', verticalAlign: 'middle' }} />
+                    Pravin P <ExternalLink size={12} style={{ display: 'inline', verticalAlign: 'middle' }} />
                   </a>
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="footer-divider" />
-
-          {/* 3. Feedbacks Section */}
-          <div className="footer-section">
+          {/* Column 3: Feedbacks Card */}
+          <div className="footer-col">
             <div className="feedback-box">
               <h4 className="feedback-tagline">Always open for your feedbacks!</h4>
               <p className="feedback-subtext">
@@ -213,9 +203,10 @@ const Footer = () => {
 
         </div>
 
-        {/* 4. Bottom Line */}
-        <div className="footer-bottom" style={{ marginTop: '2.5rem' }}>
+        {/* Bottom Line */}
+        <div className="footer-bottom">
           <p>&copy; {new Date().getFullYear()} RMKEC Note Share. Built for the students of R.M.K. Engineering College.</p>
+          <p>Developed by <strong>Pravin P</strong> (IT • Batch 2028)</p>
         </div>
       </div>
 

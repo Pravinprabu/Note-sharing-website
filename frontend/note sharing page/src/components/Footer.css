@@ -1,148 +1,127 @@
-/* Yellow Distinct Footer */
+/* Yellow Distinct Footer with Horizontal 3-Column Split */
 .site-footer {
   background: linear-gradient(180deg, #FFCA28 0%, #FFB300 100%);
   border-top: 2px solid #E0A800;
   color: #1F2937;
   position: relative;
   z-index: 10;
-  padding: 3.5rem 1.5rem 2rem 1.5rem;
+  padding: 3rem 1.5rem 1.5rem 1.5rem;
   margin-top: auto;
   box-shadow: 0 -4px 20px rgba(255, 193, 7, 0.15);
 }
 
 .footer-container {
-  max-width: 860px;
+  max-width: 1240px;
   margin: 0 auto;
-  text-align: center;
 }
 
-/* Vertical Flow Layout - One by One */
-.footer-vertical-stack {
+/* Horizontal 3-Column Grid on Desktop */
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1.35fr 1.1fr;
+  gap: 2.5rem;
+  align-items: start;
+  margin-bottom: 2.25rem;
+}
+
+.footer-col {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 2.25rem;
 }
 
-.footer-section {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-/* Section 1: Website Explanation */
+/* Column 1: Website Explanation */
 .footer-brand {
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
   font-weight: 800;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   color: #111827;
   text-decoration: none;
   margin-bottom: 0.75rem;
 }
 
 .footer-desc {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: #374151;
-  max-width: 640px;
-  line-height: 1.65;
-  margin: 0 auto 1.25rem auto;
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
 }
 
 .footer-quick-links {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1.25rem;
+  gap: 0.75rem;
   flex-wrap: wrap;
 }
 
 .footer-link {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 600;
   color: #111827;
   text-decoration: none;
-  padding: 0.25rem 0.6rem;
+  padding: 0.3rem 0.65rem;
   border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.4);
   transition: all 0.2s;
+  border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .footer-link:hover {
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.85);
   color: #000;
   transform: translateY(-1px);
 }
 
-.footer-divider {
-  width: 100%;
-  max-width: 500px;
-  height: 1px;
-  background: rgba(0, 0, 0, 0.12);
-  margin: 0 auto;
-}
-
-/* Section 2: Developed By Details */
+/* Column 2: Developer Details */
 .developed-by-header {
-  font-size: 1.35rem;
+  font-size: 1.1rem;
   font-weight: 800;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.04em;
   color: #111827;
   text-transform: uppercase;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.35rem;
 }
 
 .dev-name {
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   font-weight: 800;
   color: #111827;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.65rem;
 }
 
-.dev-academic-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 0.75rem 1.25rem;
+.dev-details-list {
   list-style: none;
   padding: 0;
-  margin: 0 auto 1.25rem auto;
-  font-size: 0.95rem;
+  margin: 0 0 0.85rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: #374151;
 }
 
-.dev-academic-item {
-  display: inline-flex;
+.dev-details-list li {
+  display: flex;
   align-items: center;
-  gap: 0.4rem;
-  background: rgba(255, 255, 255, 0.45);
-  padding: 0.35rem 0.85rem;
-  border-radius: 9999px;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  gap: 0.45rem;
 }
 
-.dev-contact-block {
+.dev-connect-list {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.95rem;
+  gap: 0.45rem;
+  font-size: 0.875rem;
   color: #1F2937;
   font-weight: 500;
-  margin-top: 0.25rem;
 }
 
-.dev-contact-row {
+.dev-connect-item {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
+  gap: 0.45rem;
   flex-wrap: wrap;
+  word-break: break-all;
 }
 
 .dev-link {
@@ -159,30 +138,28 @@
   border-radius: 4px;
 }
 
-/* Section 3: Feedbacks Section */
+/* Column 3: Feedbacks Card */
 .feedback-box {
   background: #FFFFFF;
   border-radius: var(--radius-lg);
-  padding: 1.75rem 2rem;
+  padding: 1.5rem;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-  max-width: 600px;
-  width: 100%;
-  margin: 0 auto;
   border: 1px solid rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .feedback-tagline {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 800;
   color: #111827;
-  margin-bottom: 0.4rem;
 }
 
 .feedback-subtext {
-  font-size: 0.875rem;
+  font-size: 0.825rem;
   color: #6B7280;
   line-height: 1.5;
-  margin-bottom: 1.25rem;
 }
 
 .feedback-open-btn {
@@ -193,13 +170,14 @@
   background-color: #111827;
   color: #FFFFFF;
   font-weight: 700;
-  font-size: 0.925rem;
-  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  padding: 0.65rem 1rem;
   border-radius: var(--radius-sm);
   border: none;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  margin-top: 0.25rem;
 }
 
 .feedback-open-btn:hover {
@@ -208,17 +186,18 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
-/* Section 4: Footer Bottom */
+/* Bottom Bar */
 .footer-bottom {
   border-top: 1px solid rgba(0, 0, 0, 0.12);
-  padding-top: 1.5rem;
-  font-size: 0.85rem;
+  padding-top: 1.25rem;
+  font-size: 0.825rem;
   color: #4B5563;
   font-weight: 500;
   display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
+  justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 /* Feedback Modal Styles */
@@ -276,21 +255,33 @@
   font-weight: 600;
 }
 
-/* Responsive adjustments */
-@media (max-width: 640px) {
+/* Responsive Grid Breakdown */
+@media (max-width: 992px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  .footer-col:last-child {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 680px) {
   .site-footer {
-    padding: 2.5rem 1rem 1.5rem 1rem;
+    padding: 2.5rem 1rem 1.25rem 1rem;
   }
-  
-  .dev-academic-list {
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .footer-col:last-child {
+    grid-column: span 1;
+  }
+  .footer-bottom {
     flex-direction: column;
-    gap: 0.5rem;
+    text-align: center;
+    gap: 0.35rem;
   }
-  
-  .feedback-box {
-    padding: 1.25rem 1rem;
-  }
-  
   .feedback-modal-card {
     padding: 1.5rem 1.2rem;
   }
