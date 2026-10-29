@@ -7,6 +7,7 @@ const DEPARTMENTS = [
   'All', 
   'Science and Humanities', 
   'Information Technology', 
+  'Computer Science and Business Systems',
   'Computer Science and design', 
   'Electronics and Communication', 
   'Electronics and Electrical', 
