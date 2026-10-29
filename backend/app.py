@@ -424,16 +424,21 @@ def upload_file():
 def get_file(file_id):
     try:
         grid_out = fs.get(ObjectId(file_id))
-        
-        # Increment downloads count for associated note
-        notes_collection.update_one({"file_id": file_id}, {"$inc": {"downloads": 1}})
+        action = request.args.get("action", "download").strip().lower()
+        as_attachment = (action != "view")
 
-        return send_file(
+        # Increment downloads count for associated note only when actually downloading
+        if as_attachment:
+            notes_collection.update_one({"file_id": file_id}, {"$inc": {"downloads": 1}})
+
+        response = send_file(
             io.BytesIO(grid_out.read()),
             mimetype=grid_out.content_type or 'application/octet-stream',
-            as_attachment=False,
+            as_attachment=as_attachment,
             download_name=grid_out.filename
         )
+        response.headers["Access-Control-Expose-Headers"] = "Content-Disposition"
+        return response
     except gridfs.errors.NoFile:
         abort(404, description="File not found")
     except Exception:
