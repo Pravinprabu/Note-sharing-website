@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, BookOpen, Star, Download, Trash2, Heart, Users, FileText } from 'lucide-react';
+import { User, BookOpen, Star, Download, Trash2, Heart, Users, FileText, Eye } from 'lucide-react';
 import { apiFetch, getAuthToken, API_BASE } from '../utils/api';
 import './Pages.css';
 
@@ -221,13 +221,23 @@ const Profile = () => {
                     
                     <div className="note-card-footer mt-4" style={{ display: 'flex', gap: '0.5rem' }}>
                       <a 
-                        href={`${API_BASE}/api/files/${note.file_id}`} 
+                        href={`${API_BASE}/api/files/${note.file_id}?action=download`} 
+                        download
+                        className="btn btn-primary" 
+                        style={{ flex: 1, textAlign: 'center', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}
+                        title="Download file to your device"
+                      >
+                        <Download size={16} /> Download
+                      </a>
+                      <a 
+                        href={`${API_BASE}/api/files/${note.file_id}?action=view`} 
                         target="_blank" 
                         rel="noreferrer" 
                         className="btn btn-outline" 
-                        style={{ flex: 1, textAlign: 'center', textDecoration: 'none' }}
+                        title="Preview file in new tab"
+                        style={{ padding: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       >
-                        View File
+                        <Eye size={18} />
                       </a>
                       <button 
                         onClick={() => handleDeleteNote(note._id)} 
@@ -295,13 +305,23 @@ const Profile = () => {
                     
                     <div className="note-card-footer mt-4" style={{ display: 'flex', gap: '0.5rem' }}>
                       <a 
-                        href={`${API_BASE}/api/files/${note.file_id}`} 
+                        href={`${API_BASE}/api/files/${note.file_id}?action=download`} 
+                        download
+                        className="btn btn-primary" 
+                        style={{ flex: 1, textAlign: 'center', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}
+                        title="Download file to your device"
+                      >
+                        <Download size={16} /> Download
+                      </a>
+                      <a 
+                        href={`${API_BASE}/api/files/${note.file_id}?action=view`} 
                         target="_blank" 
                         rel="noreferrer" 
-                        className="btn btn-primary" 
-                        style={{ flex: 1, textAlign: 'center', textDecoration: 'none' }}
+                        className="btn btn-outline" 
+                        title="Preview file in new tab"
+                        style={{ padding: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       >
-                        View File
+                        <Eye size={18} />
                       </a>
                       <button 
                         onClick={() => handleRemoveSaved(note._id)} 

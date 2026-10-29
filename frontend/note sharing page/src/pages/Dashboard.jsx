@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, Filter, BookOpen, Star, Download, Heart, UserPlus, UserCheck, Sparkles, GraduationCap } from 'lucide-react';
+import { Search, Filter, BookOpen, Star, Download, Heart, Eye, UserPlus, UserCheck, Sparkles, GraduationCap } from 'lucide-react';
 import { apiFetch, getAuthToken, getStoredUser, API_BASE } from '../utils/api';
 import './Dashboard.css';
 
@@ -476,14 +476,24 @@ const Dashboard = () => {
                     
                     <div className="note-card-footer">
                       <a 
-                        href={`${API_BASE}/api/files/${note.file_id}`} 
+                        href={`${API_BASE}/api/files/${note.file_id}?action=download`} 
+                        download
+                        onClick={() => handleDownloadClick(note._id)}
+                        className="btn btn-primary" 
+                        style={{ flex: 1, justifyContent: 'center', display: 'flex', alignItems: 'center', gap: '0.4rem', textDecoration: 'none' }}
+                        title="Download notes to your device"
+                      >
+                        <Download size={16} /> Download
+                      </a>
+                      <a 
+                        href={`${API_BASE}/api/files/${note.file_id}?action=view`} 
                         target="_blank" 
                         rel="noreferrer" 
-                        onClick={() => handleDownloadClick(note._id)}
-                        className="btn btn-outline w-full" 
-                        style={{ justifyContent: 'center', display: 'flex', textDecoration: 'none' }}
+                        className="icon-btn" 
+                        title="Preview in new tab (without downloading)"
+                        style={{ textDecoration: 'none' }}
                       >
-                        View PDF
+                        <Eye size={18} />
                       </a>
                       <button 
                         className="icon-btn" 
