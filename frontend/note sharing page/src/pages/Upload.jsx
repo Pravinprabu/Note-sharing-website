@@ -242,6 +242,7 @@ const Upload = () => {
                  ) : (
                    <>
                      <option value="Information Technology">Information Technology</option>
+                      <option value="Computer Science and Business Systems">Computer Science and Business Systems</option>
                      <option value="Computer Science and design">Computer Science and design</option>
                      <option value="Electronics and Communication">Electronics and Communication</option>
                      <option value="Electronics and Electrical">Electronics and Electrical</option>
